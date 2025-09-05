@@ -25,7 +25,7 @@ docker compose build
 # Start the containers in detached mode
 docker compose up --detach
 
-# The frontend will be available at http://localhost:3080
+# The api will be available at http://localhost:8000
 
 # Stop containers and remove volumes
 docker compose down --volumes
