@@ -6,3 +6,27 @@
 ---
 
 # cloudetair-chatbot-api
+
+The <font color="#2f4b94">CLOUDET<font color="#c6c6c6"><i>ai</i></font>R</font> chatbot API provides the backend services for the [cloudetair-chatbot-frontend](https://github.com/cloudeteer/cloudetair-chatbot-frontend).
+
+## Features
+
+- Builds a containerized API service.
+- Pushes the image to GitHub Container Registry.
+- Fully automated via GitHub Actions workflows.
+- Serves as a reusable base for further customizations.
+
+## Development
+
+```shell
+# Build the container image
+docker compose build
+
+# Start the containers in detached mode
+docker compose up --detach
+
+# The frontend will be available at http://localhost:3080
+
+# Stop containers and remove volumes
+docker compose down --volumes
+```
