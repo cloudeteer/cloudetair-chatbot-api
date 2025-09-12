@@ -22,7 +22,7 @@ Chat completion endpoints following OpenAI API format.
 # - Dict and Any are used for type hinting
 # - ChatCompletionRequest, ChatCompletionResponse, ModelsResponse
 #   are data models (typing) for request and response formats
-# - azure_openai_provider, claude_provider, echo_provider are 
+# - azure_openai_provider and echo_provider are 
 #   services for handling chat completions
 # - agent_controller is the controller for managing agent 
 #   interactions
@@ -37,7 +37,7 @@ from fastapi.responses import StreamingResponse
 from typing import Dict, Any
 
 from app.models.chat import ChatCompletionRequest, ModelsResponse
-from app.services.llms import azure_openai_provider, claude_provider, echo_provider
+from app.services.llms import azure_openai_provider, echo_provider
 from app.logic.agent_controller import agent_controller
 from app.logic.rag_agent_controller import rag_agent_controller
 
@@ -82,10 +82,8 @@ router = APIRouter()
 
 MODEL_MAPPING = {
     "gpt4.1-chat": azure_openai_provider,
-    "claude-4-sonnet": claude_provider,
     "echo-model": echo_provider,
     # Special models that don't use LLM providers directly
-    "agent-mode": None,
     "ask-confluence": None,
 }
 
@@ -231,11 +229,7 @@ def models() -> Dict[str, Any]:
         available_models.append({"id": "gpt4.1-chat", "object": "model"})
         logger.info("Azure OpenAI model available")
     
-    if claude_provider.is_available():
-        available_models.extend([
-            {"id": "claude-4-sonnet", "object": "model"},
-        ])
-        logger.info("Claude models available")
+
     
     # Add ask-confluence model if vector store is available
     from app.services.vector_stores.azure_search_store import azure_search_vector_store
