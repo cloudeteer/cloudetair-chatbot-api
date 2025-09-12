@@ -1,2 +1,16 @@
 fastapi
 uvicorn
+httpx
+openai
+python-dotenv
+jinja2
+python-frontmatter
+pydantic
+ruff
+black
+mypy
+requests
+beautifulsoup4
+docling>=2.0.0
+docling-core[chunking-openai]
+aiohttp
