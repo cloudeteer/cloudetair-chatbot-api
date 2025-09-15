@@ -36,7 +36,7 @@ class AzureSearchVectorStore(BaseVectorStore):
         api_key: Optional[str] = None,
         index_name: Optional[str] = None,
         embedding_provider: Optional[BaseEmbeddingProvider] = None,
-        api_version: str = "2023-11-01"
+        api_version: Optional[str] = None
     ):
         """
         Initialize Azure Search vector store.
@@ -51,7 +51,7 @@ class AzureSearchVectorStore(BaseVectorStore):
         self.endpoint = endpoint or os.getenv("AZURE_SEARCH_ENDPOINT")
         self.api_key = api_key or os.getenv("AZURE_SEARCH_KEY")
         self.index_name = index_name or os.getenv("AZURE_SEARCH_INDEX", "embeddings-index")
-        self.api_version = api_version
+        self.api_version = api_version or os.getenv("AZURE_SEARCH_API_VERSION")
         
         # Use provided embedding provider or default to Azure
         self.embedding_provider = embedding_provider or azure_embedding_provider
