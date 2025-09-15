@@ -373,7 +373,7 @@ Please provide a comprehensive answer based on the available documentation."""
         try:
             # Check if vector store is available
             if not self.vector_store.is_available():
-                logger.warning("Vector store is not available")
+                logger.warning(f"Vector store {self.vector_store} is not available")
                 return []
             
             # Check if embedding provider is available
