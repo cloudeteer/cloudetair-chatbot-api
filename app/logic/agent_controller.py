@@ -26,6 +26,7 @@ from typing import List
 from app.models.chat import Message, ChatCompletionRequest
 from app.services.llms.azure_openai_provider import AzureOpenAIProvider
 from app.prompts.prompt_manager import PromptManager
+import os
 
 """
 -----------------------------------------------------------------
@@ -113,7 +114,7 @@ class AgentController:
         except Exception as e:
             logger.error(f"Agent execution failed: {str(e)}")
             
-            return f"I encountered an error while processing your request: {str(e)}"
+            return f"Es gab einen Fehler bei der Verarbeitung Ihrer Anfrage: {str(e)}"
     
     async def _simple_planner(self, messages: List[Message]) -> str:
         """
@@ -129,7 +130,7 @@ class AgentController:
         if not self.azure_service.is_available():
             # Fallback if Azure OpenAI is not available
             user_message = next((m.content for m in messages if m.role == "user"), "")
-            fallback_goal = f"Help the user with: {user_message}"
+            fallback_goal = f"Hilf dem Nutzer mit: {user_message}"
             
             return fallback_goal
         
@@ -214,18 +215,24 @@ class AgentController:
         Returns:
             Final response as a string
         """
-        
+    
+        # Get configured language or use default
+        response_language = os.getenv("RESPONSE_LANGUAGE", "German")
+    
         if not self.azure_service.is_available():
             # Fallback if Azure OpenAI is not available
             user_message = next((m.content for m in messages if m.role == "user"), "No message")
-            fallback_response = f"I understand you want help with: {user_message}. However, I'm currently running in limited mode. Please ensure Azure OpenAI is configured for full functionality."
-            
-            return fallback_response
+            fallback_response = f"Ich verstehe, dass Sie Hilfe benötigen bei: {user_message}. Allerdings scheint mein Antwortgenerierungsdienst derzeit nicht verfügbar zu sein. Bitte versuchen Sie es später erneut."
         
+            return fallback_response
+    
         final_messages = [
             Message(
                 role="system",
-                content=PromptManager.get_prompt("final_response_generator", goal=goal, reasoning=reasoning)
+                content=PromptManager.get_prompt("final_response_generator", 
+                    goal=goal, 
+                    reasoning=reasoning,
+                    language=response_language)
             )
         ] + messages
         

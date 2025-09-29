@@ -32,9 +32,10 @@ Chat completion endpoints following OpenAI API format.
 
 import logging
 import uuid
+import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from app.models.chat import ChatCompletionRequest, ModelsResponse
 from app.services.llms import azure_openai_provider, echo_provider
@@ -119,6 +120,9 @@ async def chat_completion(req: ChatCompletionRequest, request: Request):
         Chat completion response in OpenAI API format (streaming or non-streaming)
     """
     logger.info(f"Chat completion request for model: {req.model}, streaming: {req.stream}")
+    
+    # Use system config language specified in environment variable or default to German
+    response_language = os.getenv("RESPONSE_LANGUAGE", "German")
     
     # Get the provider for the requested model
     provider = MODEL_MAPPING.get(req.model)
