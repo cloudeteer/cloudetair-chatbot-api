@@ -197,20 +197,21 @@ class RAGAgentController:
         # Build system prompt with context
         system_prompt = f"""You are a helpful assistant that answers questions based on the provided Confluence documentation context.
 
-Instructions:
-- Use the provided document context to answer the user's question
-- Be accurate and specific based on the documentation
-- If the context doesn't contain enough information to fully answer the question, say so
-- Provide a clear and helpful response
-- Do not make up information not present in the context
-- Provide also the link to the source document if available
+                        Instructions:
+                        - Use the provided document context to answer the user's question
+                        - Be accurate and specific based on the documentation
+                        - If the context doesn't contain enough information to fully answer the question, say so
+                        - Provide a clear and helpful response
+                        - Do not make up information not present in the context
+                        - Provide also the link to the source document if available
+                        - IMPORTANT: Always respond only in {response_language}
 
-User Query: {query}
+                        User Query: {query}
 
-Document Context:
-{context}
+                        Document Context:
+                        {context}
 
-Please provide a comprehensive answer based on the available documentation."""
+                        Please provide a comprehensive answer based on the available documentation."""
 
         # Create messages for LLM
         rag_messages = [
@@ -413,6 +414,9 @@ Please provide a comprehensive answer based on the available documentation."""
         Returns:
             Generated response with source citations
         """
+        # Get configured language or use default
+        response_language = os.getenv("RESPONSE_LANGUAGE", "German")
+        
         # Build context from retrieved documents
         context_parts = []
         sources = []
@@ -437,23 +441,24 @@ Please provide a comprehensive answer based on the available documentation."""
             logger.warning("LLM provider not available, returning context-only response")
             return self._generate_context_only_response(query, documents, sources)
         
-        # Build system prompt with context
+        # Build system prompt with context and language instruction
         system_prompt = f"""You are a helpful assistant that answers questions based on the provided Confluence documentation context.
 
-Instructions:
-- Use the provided document context to answer the user's question
-- Be accurate and specific based on the documentation
-- If the context doesn't contain enough information to fully answer the question, say so
-- Provide a clear and helpful response
-- Do not make up information not present in the context
-- Provide also the link to the source document if available
+                        Instructions:
+                        - Use the provided document context to answer the user's question
+                        - Be accurate and specific based on the documentation
+                        - If the context doesn't contain enough information to fully answer the question, say so
+                        - Provide a clear and helpful response
+                        - Do not make up information not present in the context
+                        - Provide also the link to the source document if available
+                        - IMPORTANT: Always respond only in {response_language}
 
-User Query: {query}
+                        User Query: {query}
 
-Document Context:
-{context}
+                        Document Context:
+                        {context}
 
-Please provide a comprehensive answer based on the available documentation."""
+                        Please provide a comprehensive answer based on the available documentation."""
 
         # Create messages for LLM
         rag_messages = [
@@ -539,13 +544,11 @@ Please provide a comprehensive answer based on the available documentation."""
             Appropriate response for no documents found
         """
         return (
-            f"I couldn't find any relevant information in our Confluence documentation "
-            f"to answer your question about: {query}\n\n"
-            f"This could mean:\n"
-            f"- The information hasn't been documented yet\n"
-            f"- The question might be outside the scope of our current documentation\n"
-            f"- Try rephrasing your question with different keywords\n\n"
-            f"You might want to check the Confluence space directly or reach out to the appropriate team for more information."
+            f"Ich konnte leider keine relevanten Informationen zum Thema '{query}' in meinen Unterlagen finden\n\n "
+            f"Das könnte folgende Gründe haben:\n"
+            f"- Die Informationen wurden noch nicht dokumentiert\n"
+            f"- Die Frage könnte außerhalb des Umfangs unserer aktuellen Dokumentation liegen\n"
+            f"- Versuchen Sie, Ihre Frage mit anderen Schlüsselwörtern umzuformulieren\n\n"
         )
     
     def _generate_context_only_response(
@@ -566,8 +569,8 @@ Please provide a comprehensive answer based on the available documentation."""
             Context-based response without LLM generation
         """
         response_parts = [
-            f"I found some relevant information about your query: {query}\n",
-            "Here are the most relevant sections from our documentation:\n"
+            f"Ich habe relevante Informationen zu Ihrer Anfrage gefunden: {query}\n",
+            "Hier sind die relevantesten Abschnitte aus unserer Datenbank:\n"
         ]
         
         for i, doc in enumerate(documents[:3], 1):  # Limit to top 3 documents
@@ -580,8 +583,8 @@ Please provide a comprehensive answer based on the available documentation."""
             response_parts.extend(["\n**Sources:**", "\n".join(sources)])
         
         response_parts.append(
-            "\n*Note: AI response generation is currently unavailable. "
-            "The above information is directly from our documentation.*"
+            "\n*Note: KI Antwortgenerierung ist aktuell nicht verfügbar. "
+            "Daher ist die obige Information möglicherweise unvollständig.*"
         )
         
         return "\n".join(response_parts)
@@ -600,13 +603,12 @@ Please provide a comprehensive answer based on the available documentation."""
         user_query = self._extract_user_query(messages)
         
         return (
-            f"I apologize, but I encountered an issue while searching for information about: {user_query}\n\n"
-            f"This might be due to:\n"
-            f"- Temporary service unavailability\n"
-            f"- Configuration issues with the knowledge base\n"
-            f"- Network connectivity problems\n\n"
-            f"Please try again in a few moments, or reach out to support if the issue persists.\n\n"
-            f"Technical details: {error}"
+            f"Entschuldigung aber es gab einen Fehler beim Versuch etwas über '{user_query}' zu finden.\n\n"
+            f"Das könnte folgende Gründe haben:\n"
+            f"- Temporäre Dienstunterbrechung\n"
+            f"- Konfigurationsprobleme mit der Wissensdatenbank\n"
+            f"- Netzwerkverbindungsprobleme\n\n"
+            f"Bitte versuchen Sie es in ein paar Minuten erneut oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.\n\n"
         )
 
 

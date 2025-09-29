@@ -55,6 +55,11 @@ class PromptManager:
 
             # Render the template
             jinja_template = env.from_string(post.content)
+            
+            # Always include language from environment variables if not provided
+            if 'language' not in kwargs:
+                kwargs['language'] = os.getenv("RESPONSE_LANGUAGE", "German")
+                
             return jinja_template.render(**kwargs)
             
         except TemplateNotFound:

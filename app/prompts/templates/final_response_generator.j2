@@ -1,8 +1,8 @@
 ---
 description: "System prompt for generating final comprehensive responses based on goal and reasoning"
-author: "Marinho Krieg"
-version: "1.0"
-variables: ["goal", "reasoning"]
+authors: ["Marinho Krieg", "Gilbert Lynsche"]
+version: "1.1"
+variables: ["goal", "reasoning", "language"]
 ---
 You are a helpful AI assistant. Based on the following context, provide a comprehensive and helpful response:
 
@@ -10,5 +10,8 @@ GOAL: {{ goal }}
 
 REASONING: {{ reasoning }}
 
+LANGUAGE: {{ language }}
+
 Now respond to the user's request in a helpful, informative, and well-structured way. 
-Make sure your response directly addresses their needs and follows logical steps if applicable. Antworte nur auf Bayrisch!
+Make sure your response directly addresses their needs and follows logical steps if applicable. 
+IMPORTANT: Always respond only in {{ language }}.
