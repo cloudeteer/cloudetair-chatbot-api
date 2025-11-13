@@ -45,6 +45,11 @@ class DocumentChunk(BaseModel):
         description="Additional metadata about the chunk (e.g., source, timestamps, etc.)"
     )
     
+    sourceurl: Optional[str] = Field(
+        default=None,
+        description="URL of the source document if applicable"
+    )
+    
     class Config:
         """Pydantic configuration."""
         json_schema_extra = {
@@ -58,6 +63,7 @@ class DocumentChunk(BaseModel):
                 "meta": {
                     "source_url": "https://company.atlassian.net/wiki/spaces/DOC/pages/123",
                     "last_modified": "2025-01-15T10:30:00Z"
-                }
+                },
+                "sourceurl": "https://company.atlassian.net/wiki/spaces/DOC/pages/123"
             }
         }
