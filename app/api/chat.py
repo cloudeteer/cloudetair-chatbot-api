@@ -32,6 +32,7 @@ Chat completion endpoints following OpenAI API format.
 
 import logging
 import uuid
+import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from typing import Dict, Any
@@ -220,8 +221,7 @@ def models() -> Dict[str, Any]:
     logger.info("Listing available models")
     
     available_models = [
-        {"id": "echo-model", "object": "model"},
-        {"id": "agent-mode", "object": "model"}
+        {"id": "echo-model", "object": "model"}
     ]
     
     # Check each provider and add their models if available
